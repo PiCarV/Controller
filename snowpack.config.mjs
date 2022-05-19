@@ -1,8 +1,17 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 export default {
   mount: {
-    public: { url: '/', static: true },
+    public: {
+      url: '/',
+      static: true,
+      dot: true,
+    },
     src: { url: '/dist' },
+  },
+  optimize: {
+    bundle: true,
+    minify: true,
+    target: 'es2018',
   },
   plugins: [
     '@snowpack/plugin-react-refresh',
@@ -33,5 +42,7 @@ export default {
   },
   buildOptions: {
     /* ... */
+    // Remove this if building for apps:
+    baseUrl: 'https://PiCarV.github.io/Controller',
   },
 };

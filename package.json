@@ -1,11 +1,13 @@
 {
-  "name": "rocket-template",
+  "name": "picar-controller",
   "version": "0.0.1",
   "author": "Andre Cox",
-  "homepage": "https://github.com/AndreCox/Rocket-Template",
+  "homepage": "https://PiCarV.github.io/Controller",
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build -t true",
     "android": "npm run build && cap run android",
     "ios": "npm run build && cap run ios",
     "test": "web-test-runner \"src/**/*.test.tsx\"",
@@ -19,6 +21,7 @@
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.4.2",
     "gamepads": "^1.2.2",
+    "gh-pages": "^4.0.0",
     "mobx": "^6.3.13",
     "mobx-react-lite": "^3.2.3",
     "react": "^17.0.2",
