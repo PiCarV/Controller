@@ -4,19 +4,13 @@
   "author": "Andre Cox",
   "homepage": "https://PiCarV.github.io/Controller",
   "scripts": {
-    "start": "snowpack dev",
+    "start": "concurrently --kill-others \"snowpack dev\" \"tauri dev\"",
     "build": "snowpack build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build -t true",
-    "android": "npm run build && cap run android",
-    "ios": "npm run build && cap run ios",
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
-    "@capacitor/core": "^3.4.0",
-    "@capacitor/status-bar": "^1.0.8",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.4.2",
@@ -35,9 +29,6 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
-    "@capacitor/android": "^3.4.0",
-    "@capacitor/cli": "^3.4.0",
-    "@capacitor/ios": "^3.4.0",
     "@snowpack/plugin-dotenv": "^2.1.0",
     "@snowpack/plugin-postcss": "^1.4.3",
     "@snowpack/plugin-react-refresh": "^2.5.0",
@@ -45,6 +36,7 @@
     "@snowpack/plugin-typescript": "^1.2.1",
     "@snowpack/plugin-webpack": "^3.0.0",
     "@snowpack/web-test-runner-plugin": "^0.2.2",
+    "@tauri-apps/cli": "^1.0.0-rc.13",
     "@testing-library/react": "^11.2.6",
     "@types/chai": "^4.2.17",
     "@types/mocha": "^8.2.2",
@@ -54,6 +46,7 @@
     "@types/validator": "^13.7.1",
     "@web/test-runner": "^0.13.3",
     "chai": "^4.3.4",
+    "concurrently": "^7.2.1",
     "prettier": "^2.2.1",
     "snowpack": "^3.3.7",
     "tailwindcss": "^3.0.19",

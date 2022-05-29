@@ -42,7 +42,5 @@ export default {
   },
   buildOptions: {
     /* ... */
-    // Remove this if building for apps:
-    baseUrl: 'https://PiCarV.github.io/Controller',
   },
 };
