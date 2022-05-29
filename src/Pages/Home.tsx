@@ -11,7 +11,7 @@ import Gamepads from 'gamepads';
 import { MdSettings } from 'react-icons/md';
 
 Gamepads.start();
-
+// Set's up the gampads event listener
 Gamepads.addEventListener('connect', (e: any) => {
   console.log('Gamepad connected');
   e.gamepad.addEventListener(
@@ -118,19 +118,22 @@ const handleKeyDown = (e: any) => {
     if (store.connected) {
       socket.emit('drive', store.power);
     }
-  } else if (e.keyCode === 83 && store.power - PowerSpeed >= -100) {
+  }
+  if (e.keyCode === 83 && store.power - PowerSpeed >= -100) {
     powerDown = true;
     store.power = store.power - PowerSpeed;
     if (store.connected) {
       socket.emit('drive', store.power);
     }
-  } else if (e.keyCode === 65 && store.angle - TurnSpeed >= 0) {
+  }
+  if (e.keyCode === 65 && store.angle - TurnSpeed >= 0) {
     steeringDown = true;
     store.angle = store.angle - TurnSpeed;
     if (store.connected) {
       socket.emit('steer', store.angle);
     }
-  } else if (e.keyCode === 68 && store.angle + TurnSpeed <= 180) {
+  }
+  if (e.keyCode === 68 && store.angle + TurnSpeed <= 180) {
     steeringDown = true;
     store.angle = store.angle + TurnSpeed;
     if (store.connected) {

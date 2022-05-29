@@ -5,7 +5,7 @@
   "homepage": "https://PiCarV.github.io/Controller",
   "scripts": {
     "start": "concurrently --kill-others \"snowpack dev\" \"tauri dev\"",
-    "build": "snowpack build",
+    "build": "snowpack build && tauri build",
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
