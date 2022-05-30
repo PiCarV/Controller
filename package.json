@@ -11,6 +11,7 @@
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
+    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.4.2",
