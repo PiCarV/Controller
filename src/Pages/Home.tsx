@@ -9,6 +9,8 @@ import { useCookies } from 'react-cookie';
 import { configure, autorun } from 'mobx';
 import Gamepads from 'gamepads';
 import { MdSettings } from 'react-icons/md';
+import TryConnect from '../backend/connections';
+import { ConnectionDisplay, VideoStream, Steering } from '../Components';
 
 Gamepads.start();
 // Set's up the gampads event listener
@@ -57,30 +59,7 @@ configure({
   enforceActions: 'never',
 });
 
-var socket: any;
-
-const TryConnect = (setCookie: any) => {
-  socket = io(`http://${store.ip}:3000`);
-  socket.on('connect', function () {
-    console.log('connected');
-    store.connected = true;
-    setCookie('ip', store.ip, { path: '/' });
-  });
-  socket.on('disconnect', function () {
-    store.connected = false;
-  });
-};
-
-var componentDisplay = 'block';
-
-autorun(() => {
-  if (!store.connected) {
-    store.ip = '0.0.0.0';
-    componentDisplay = 'block';
-  } else {
-    componentDisplay = 'none';
-  }
-});
+let socket = TryConnect();
 
 var powerDown = false;
 var steeringDown = false;
@@ -150,25 +129,6 @@ const handleKeyUp = (e: any) => {
   }
 };
 
-const VideoStream = observer(() => {
-  if (store.connected) {
-    return (
-      <img
-        className="bg-cover rounded-lg absolute -z-50 max-h-screen max-w-screen"
-        src={'http://' + store.ip + ':8080/?action=stream'}
-      />
-    );
-  } else {
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <h1 className="text-white absolute animate-pulse">Connect to a car</h1>
-        <div className=" border-2 animate-ping border-white w-32 h-32 absolute rounded-full " />
-        <div className=" border-2 animate-ping border-white w-36 h-36 absolute rounded-full " />
-      </div>
-    );
-  }
-});
-
 const Home = observer(() => {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown, false);
@@ -187,47 +147,9 @@ const Home = observer(() => {
       </Link>
 
       {/* IP connection code  top left*/}
-      <form className="left-2 top-2 p-2 flex flex-col text-white  absolute rounded-lg  text-sm shadow-black  max-w-sm border  shadow-md  bg-gray-800 border-gray-700">
-        <div className="flex flex-row justify-between">
-          <label>IP</label>
-          <label>Connected: {String(store.connected)}</label>
-        </div>
-        <input
-          className="my-1 outline-none border bg-gray-700 border-gray-600 ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg p-1"
-          placeholder="IP"
-          type="text"
-          disabled={store.connected}
-          value={store.ip}
-          onClick={() => {
-            console.log('clicked');
-          }}
-          onChange={(e) => {
-            store.ip = e.target.value;
-            if (isIP(store.ip)) {
-              console.log('valid ip');
-              TryConnect(setCookie);
-            }
-          }}
-        />
-        <label style={{ display: componentDisplay }}>Previous Connection</label>
-        <div
-          onClick={() => {
-            console.log('clicked');
-            if (cookies['ip'] !== undefined) {
-              store.ip = cookies['ip'];
-              TryConnect(setCookie);
-            }
-          }}
-        >
-          <input
-            style={{ display: componentDisplay }}
-            className="my-1 outline-none border bg-gray-700 border-gray-600 rounded-lg p-1"
-            type="text"
-            value={cookies['ip']}
-            disabled
-          />
-        </div>
-      </form>
+
+      <ConnectionDisplay className="absolute left-2 top-2" />
+
       {/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
       {/* Steering Display Code Bottom Right */}
@@ -333,7 +255,7 @@ const Home = observer(() => {
 
       {/* Video Stream Code */}
       <div className="flex w-full h-full justify-center align-middle">
-        <VideoStream />
+        <VideoStream ip={store.ip} connected={store.connected} />
       </div>
       {/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
     </div>
