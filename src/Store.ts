@@ -1,9 +1,17 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 import persistentStore from './PersistentStore';
+import io from 'socket.io-client';
+
+type RetrieveSettings = () => Promise<string>;
+
+// @ts-ignore
+const retrieveSettings: RetrieveSettings = async () => {
+  let storedIP = await persistentStore.get('previousIP');
+  // return a string until we have a proper type
+  return storedIP;
+};
 
 //define store class which will be used to store data, add extra states here
-
-let storedIP: string | null = await persistentStore.get('previousIP');
 class Store {
   //driving data
   angle: number = 90;
@@ -20,12 +28,20 @@ class Store {
   ip: string = '0.0.0.0';
 
   //previous id's
-  previousIP = storedIP ?? '';
+  previousIP = '';
+
+  //the socket client
+  socket = io(`http://${this.ip}:3000`);
 
   constructor() {
     makeAutoObservable(this);
   }
   //you can add functions to manipulate data here
+  fetchSettings() {
+    retrieveSettings().then((ip) => {
+      this.previousIP = ip;
+    });
+  }
 }
 
 export const store = new Store();

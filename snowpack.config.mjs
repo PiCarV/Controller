@@ -11,7 +11,7 @@ export default {
   optimize: {
     bundle: true,
     minify: true,
-    target: 'es2018',
+    target: 'esnext',
   },
   plugins: [
     '@snowpack/plugin-react-refresh',

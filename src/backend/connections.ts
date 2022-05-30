@@ -1,6 +1,6 @@
-import { store } from '../Store';
 import { io } from 'socket.io-client';
 import persistentStore from '../PersistentStore';
+import { store } from '../Store';
 
 const TryConnect = () => {
   let socket = io(`http://${store.ip}:3000`);
@@ -14,8 +14,7 @@ const TryConnect = () => {
   socket.on('disconnect', function () {
     store.connected = false;
   });
-
-  return socket;
+  store.socket = socket;
 };
 
 export default TryConnect;

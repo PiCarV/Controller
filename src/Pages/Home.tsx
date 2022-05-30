@@ -24,7 +24,7 @@ Gamepads.addEventListener('connect', (e: any) => {
         Number(e.gamepad.gamepad.axes[0]) * Number(settingsStore.steeringLimit);
       steeringDown = true;
       if (store.connected) {
-        socket.emit('steer', store.angle);
+        store.socket.emit('steer', store.angle);
       }
     },
     [0],
@@ -34,8 +34,8 @@ Gamepads.addEventListener('connect', (e: any) => {
     (e: any) => {
       console.log(e.gamepad.gamepad.axes[3]);
       if (store.connected) {
-        socket.emit('pan', e.gamepad.gamepad.axes[2] * -90 + 90);
-        socket.emit('tilt', -e.gamepad.gamepad.axes[3] * 90 + 90);
+        store.socket.emit('pan', e.gamepad.gamepad.axes[2] * -90 + 90);
+        store.socket.emit('tilt', -e.gamepad.gamepad.axes[3] * 90 + 90);
       }
     },
     [2, 3],
@@ -46,7 +46,7 @@ Gamepads.addEventListener('connect', (e: any) => {
       e.gamepad.gamepad.buttons[7].value * settingsStore.powerLimit -
       e.gamepad.gamepad.buttons[6].value * settingsStore.powerLimit;
     if (store.connected) {
-      socket.emit('drive', store.power);
+      store.socket.emit('drive', store.power);
     }
   });
 });
@@ -55,6 +55,7 @@ Gamepads.addEventListener('disconnect', (e: any) => {
   console.log('Gamepad disconnected');
 });
 
+// tell mobx not to warn
 configure({
   enforceActions: 'never',
 });
@@ -72,7 +73,7 @@ const ElasticControls = setInterval(() => {
       store.power++;
     }
     if (store.connected) {
-      socket.emit('drive', store.power);
+      store.socket.emit('drive', store.power);
     }
   }
   if (steeringDown === false) {
@@ -82,7 +83,7 @@ const ElasticControls = setInterval(() => {
       store.angle++;
     }
     if (store.connected) {
-      socket.emit('steer', store.angle);
+      store.socket.emit('steer', store.angle);
     }
   }
 }, 20);
@@ -95,28 +96,28 @@ const handleKeyDown = (e: any) => {
     powerDown = true;
     store.power = store.power + PowerSpeed;
     if (store.connected) {
-      socket.emit('drive', store.power);
+      store.socket.emit('drive', store.power);
     }
   }
   if (e.keyCode === 83 && store.power - PowerSpeed >= -100) {
     powerDown = true;
     store.power = store.power - PowerSpeed;
     if (store.connected) {
-      socket.emit('drive', store.power);
+      store.socket.emit('drive', store.power);
     }
   }
   if (e.keyCode === 65 && store.angle - TurnSpeed >= 0) {
     steeringDown = true;
     store.angle = store.angle - TurnSpeed;
     if (store.connected) {
-      socket.emit('steer', store.angle);
+      store.socket.emit('steer', store.angle);
     }
   }
   if (e.keyCode === 68 && store.angle + TurnSpeed <= 180) {
     steeringDown = true;
     store.angle = store.angle + TurnSpeed;
     if (store.connected) {
-      socket.emit('steer', store.angle);
+      store.socket.emit('steer', store.angle);
     }
   }
 };
@@ -200,9 +201,9 @@ const Home = observer(() => {
               if (store.connected) {
                 if (e.target.checked) {
                   powerDown = true;
-                  socket.emit('drive', 35);
+                  store.socket.emit('drive', 35);
                 } else {
-                  socket.emit('drive', 0);
+                  store.socket.emit('drive', 0);
                 }
               }
             }}
@@ -215,9 +216,9 @@ const Home = observer(() => {
             onChange={(e) => {
               if (store.connected) {
                 if (e.target.checked) {
-                  socket.emit('tilt', 45);
+                  store.socket.emit('tilt', 45);
                 } else {
-                  socket.emit('tilt', 90);
+                  store.socket.emit('tilt', 90);
                 }
               }
             }}
@@ -245,7 +246,7 @@ const Home = observer(() => {
           onChange={(e) => {
             store.power = Number(e.target.value);
             if (store.connected) {
-              socket.emit('drive', store.power);
+              store.socket.emit('drive', store.power);
             }
           }}
         />
