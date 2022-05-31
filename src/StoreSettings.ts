@@ -1,6 +1,5 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 import { instanceOf } from 'prop-types';
-import Cookies from 'universal-cookie';
 
 //define store class which will be used to store data, add extra states here
 
@@ -12,11 +11,10 @@ class SettingsStore {
   powerLimit: number = 100;
 
   constructor() {
-    const cookies = new Cookies();
-    this.snapback = cookies.get('snapback') || 1;
-    this.steeringLimit = cookies.get('steerLimit') || 90;
-    this.powerLimit = cookies.get('powerLimit') || 100;
-    this.steeringCenter = cookies.get('steeringCenter') || 90;
+    this.snapback = 1;
+    this.steeringLimit = 90;
+    this.powerLimit = 100;
+    this.steeringCenter = 90;
     makeAutoObservable(this);
   }
   //you can add functions to manipulate data here

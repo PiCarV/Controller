@@ -3,10 +3,10 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { store } from '../Store';
 import isIP from 'validator/lib/isIP';
-import TryConnect from '../backend/connections';
 
 type ConnectionProps = {
   className?: string;
+  tryConnect: () => void;
 };
 
 const ConnectionDisplay = observer((props: ConnectionProps) => {
@@ -30,7 +30,7 @@ const ConnectionDisplay = observer((props: ConnectionProps) => {
             store.ip = e.target.value;
             if (isIP(store.ip)) {
               console.log('valid ip');
-              TryConnect();
+              props.tryConnect();
             }
           }}
         />
@@ -46,7 +46,7 @@ const ConnectionDisplay = observer((props: ConnectionProps) => {
             value={store.previousIP}
             onClick={() => {
               store.ip = store.previousIP;
-              TryConnect();
+              props.tryConnect();
             }}
           />
         </fieldset>

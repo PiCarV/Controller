@@ -1,6 +1,5 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 import persistentStore from './PersistentStore';
-import io from 'socket.io-client';
 
 type RetrieveSettings = () => Promise<string>;
 
@@ -25,16 +24,14 @@ class Store {
   pan: number = 90;
   // connection state
   connected = false;
-  ip: string = '0.0.0.0';
+  ip: string = '192.168.0.10';
 
   //previous id's
   previousIP = '';
 
-  //the socket client
-  socket = io(`http://${this.ip}:3000`);
-
   constructor() {
     makeAutoObservable(this);
+    this.fetchSettings();
   }
   //you can add functions to manipulate data here
   fetchSettings() {

@@ -1,16 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
-import isIP from 'validator/lib/isIP';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { store } from '../Store';
 import { settingsStore } from '../StoreSettings';
-import { useCookies } from 'react-cookie';
 import { configure, autorun } from 'mobx';
+import io from 'socket.io-client';
 import Gamepads from 'gamepads';
 import { MdSettings } from 'react-icons/md';
-import TryConnect from '../backend/connections';
-import { ConnectionDisplay, VideoStream, Steering } from '../Components';
+import { ConnectionDisplay, VideoStream, Steering, Power } from '../Components';
+
+let socket: any;
+
+const TryConnect = (setCookie: any) => {
+  socket = io(`http://${store.ip}:3000`);
+  socket.on('connect', function () {
+    console.log('connected');
+    store.connected = true;
+    setCookie('ip', store.ip, { path: '/' });
+  });
+  socket.on('disconnect', function () {
+    store.connected = false;
+  });
+};
 
 Gamepads.start();
 // Set's up the gampads event listener
@@ -24,7 +35,7 @@ Gamepads.addEventListener('connect', (e: any) => {
         Number(e.gamepad.gamepad.axes[0]) * Number(settingsStore.steeringLimit);
       steeringDown = true;
       if (store.connected) {
-        store.socket.emit('steer', store.angle);
+        socket.emit('steer', store.angle);
       }
     },
     [0],
@@ -34,8 +45,8 @@ Gamepads.addEventListener('connect', (e: any) => {
     (e: any) => {
       console.log(e.gamepad.gamepad.axes[3]);
       if (store.connected) {
-        store.socket.emit('pan', e.gamepad.gamepad.axes[2] * -90 + 90);
-        store.socket.emit('tilt', -e.gamepad.gamepad.axes[3] * 90 + 90);
+        socket.emit('pan', e.gamepad.gamepad.axes[2] * -90 + 90);
+        socket.emit('tilt', -e.gamepad.gamepad.axes[3] * 90 + 90);
       }
     },
     [2, 3],
@@ -46,7 +57,7 @@ Gamepads.addEventListener('connect', (e: any) => {
       e.gamepad.gamepad.buttons[7].value * settingsStore.powerLimit -
       e.gamepad.gamepad.buttons[6].value * settingsStore.powerLimit;
     if (store.connected) {
-      store.socket.emit('drive', store.power);
+      socket.emit('drive', store.power);
     }
   });
 });
@@ -60,8 +71,6 @@ configure({
   enforceActions: 'never',
 });
 
-let socket = TryConnect();
-
 var powerDown = false;
 var steeringDown = false;
 const ElasticControls = setInterval(() => {
@@ -73,7 +82,7 @@ const ElasticControls = setInterval(() => {
       store.power++;
     }
     if (store.connected) {
-      store.socket.emit('drive', store.power);
+      //socket.emit('drive', store.power);
     }
   }
   if (steeringDown === false) {
@@ -83,7 +92,7 @@ const ElasticControls = setInterval(() => {
       store.angle++;
     }
     if (store.connected) {
-      store.socket.emit('steer', store.angle);
+      //store.socket.emit('steer', store.angle);
     }
   }
 }, 20);
@@ -131,12 +140,11 @@ const handleKeyUp = (e: any) => {
 };
 
 const Home = observer(() => {
+  // use effect better known as use foot gun
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown, false);
     document.addEventListener('keyup', handleKeyUp, false);
-  }, []);
-
-  const [cookies, setCookie] = useCookies(['ip']);
+  });
 
   // Return the App component.
   return (
@@ -149,109 +157,19 @@ const Home = observer(() => {
 
       {/* IP connection code  top left*/}
 
-      <ConnectionDisplay className="absolute left-2 top-2" />
+      <ConnectionDisplay
+        className="absolute left-2 top-2"
+        tryConnect={TryConnect()}
+      />
 
       {/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
       {/* Steering Display Code Bottom Right */}
-      <div className="text-center p-4 absolute bottom-2 right-2 text-white rounded-lg  text-sm shadow-black  max-w-sm border  shadow-md  bg-gray-800 border-gray-700">
-        <p>Steering</p>
-        <input
-          className="shadow-black drop-shadow-lg my-2"
-          type="range"
-          min={
-            Number(settingsStore.steeringCenter) -
-            Number(settingsStore.steeringLimit)
-          }
-          max={
-            Number(settingsStore.steeringCenter) +
-            Number(settingsStore.steeringLimit)
-          }
-          value={store.angle}
-          onMouseDown={() => {
-            steeringDown = true;
-          }}
-          onMouseUp={() => {
-            steeringDown = false;
-          }}
-          onTouchStart={() => {
-            steeringDown = true;
-          }}
-          onTouchEnd={() => {
-            steeringDown = false;
-          }}
-          onChange={(e) => {
-            store.angle = Number(e.target.value);
-            if (store.connected) {
-              socket.emit('steer', store.angle);
-            }
-          }}
-        />
-        <p>{Number(store.angle).toFixed(0)}°</p>
-      </div>
+      <Steering socket={socket} />
       {/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
       {/* Power Display Code Bottom Left */}
-      <div className="text-center rounded-md absolute bottom-2 left-2 text-white p-4  text-sm shadow-black  max-w-sm border  shadow-md  bg-gray-800 border-gray-700">
-        <p>Power</p>
-        <div className="flex flex-row space-x-2">
-          <input
-            type="checkbox"
-            onChange={(e) => {
-              if (store.connected) {
-                if (e.target.checked) {
-                  powerDown = true;
-                  store.socket.emit('drive', 35);
-                } else {
-                  store.socket.emit('drive', 0);
-                }
-              }
-            }}
-          />
-          <label className="text-white">Constant Speed</label>
-        </div>
-        <div className="flex flex-row space-x-2">
-          <input
-            type="checkbox"
-            onChange={(e) => {
-              if (store.connected) {
-                if (e.target.checked) {
-                  store.socket.emit('tilt', 45);
-                } else {
-                  store.socket.emit('tilt', 90);
-                }
-              }
-            }}
-          />
-          <label className="text-white">Tilt Down</label>
-        </div>
-        <input
-          className="shadow-black drop-shadow-lg my-2"
-          type="range"
-          min={-settingsStore.powerLimit}
-          max={settingsStore.powerLimit}
-          value={store.power}
-          onMouseDown={() => {
-            powerDown = true;
-          }}
-          onMouseUp={() => {
-            powerDown = false;
-          }}
-          onTouchStart={() => {
-            powerDown = true;
-          }}
-          onTouchEnd={() => {
-            powerDown = false;
-          }}
-          onChange={(e) => {
-            store.power = Number(e.target.value);
-            if (store.connected) {
-              store.socket.emit('drive', store.power);
-            }
-          }}
-        />
-        <p>{store.power.toFixed(0)} %</p>
-      </div>
+      <Power socket={socket} />
       {/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
       {/* Video Stream Code */}
