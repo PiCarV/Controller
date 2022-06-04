@@ -20,9 +20,9 @@ const Power = observer((props: PowerProps) => {
             if (store.connected) {
               if (e.target.checked) {
                 store.powerDown = true;
-                store.socket.emit('drive', 35);
+                props.socket.emit('drive', 35);
               } else {
-                store.socket.emit('drive', 0);
+                props.socket.emit('drive', 0);
               }
             }
           }}
@@ -35,9 +35,9 @@ const Power = observer((props: PowerProps) => {
           onChange={(e) => {
             if (store.connected) {
               if (e.target.checked) {
-                store.socket.emit('tilt', 45);
+                props.socket.emit('tilt', 45);
               } else {
-                store.socket.emit('tilt', 90);
+                props.socket.emit('tilt', 90);
               }
             }
           }}
@@ -65,7 +65,7 @@ const Power = observer((props: PowerProps) => {
         onChange={(e) => {
           store.power = Number(e.target.value);
           if (store.connected) {
-            store.socket.emit('drive', store.power);
+            props.socket.emit('drive', store.power);
           }
         }}
       />

@@ -31,9 +31,16 @@ const Steering = observer((props: SteeringProps) => {
         onMouseUp={() => {
           store.steeringDown = false;
         }}
+        onTouchStart={() => {
+          store.steeringDown = true;
+        }}
+        onTouchEnd={() => {
+          store.steeringDown = false;
+        }}
         onChange={(e) => {
           store.angle = Number(e.target.value);
           if (store.connected) {
+            console.log('emit angle', store.angle);
             props.socket.emit('steer', store.angle);
           }
         }}
