@@ -74,42 +74,60 @@ const TurnSpeed: number = 10;
 const PowerSpeed: number = 10;
 
 const handleKeyDown = (e: any) => {
-  if (e.keyCode === 87 && store.power + PowerSpeed <= 100) {
+  if (e.keyCode === 87 || e.keyCode === 38) {
     store.powerDown = true;
-    store.power = store.power + PowerSpeed;
+    store.power = settingsStore.powerLimit;
     if (store.connected) {
-      //socket.emit('drive', store.power);
+      socket.emit('drive', settingsStore.powerLimit);
     }
   }
-  if (e.keyCode === 83 && store.power - PowerSpeed >= -100) {
+  if (e.keyCode === 83 || e.keyCode === 40) {
     store.powerDown = true;
-    store.power = store.power - PowerSpeed;
+    store.power = -settingsStore.powerLimit;
     if (store.connected) {
-      //socket.emit('drive', store.power);
+      socket.emit('drive', -settingsStore.powerLimit);
     }
   }
-  if (e.keyCode === 65 && store.angle - TurnSpeed >= 0) {
+  if (e.keyCode === 65 || e.keyCode === 37) {
     store.steeringDown = true;
-    store.angle = store.angle - TurnSpeed;
+    store.angle = settingsStore.steeringCenter - settingsStore.steeringLimit;
     if (store.connected) {
-      //socket.emit('steer', store.angle);
+      socket.emit(
+        'steer',
+        settingsStore.steeringCenter - settingsStore.steeringLimit,
+      );
     }
   }
-  if (e.keyCode === 68 && store.angle + TurnSpeed <= 180) {
+  if (e.keyCode === 68 || e.keyCode === 39) {
     store.steeringDown = true;
-    store.angle = store.angle + TurnSpeed;
+    store.angle = settingsStore.steeringCenter + settingsStore.steeringLimit;
     if (store.connected) {
-      //socket.emit('steer', store.angle);
+      socket.emit(
+        'steer',
+        settingsStore.steeringLimit + settingsStore.steeringCenter,
+      );
     }
   }
 };
 
 const handleKeyUp = (e: any) => {
-  if (e.keyCode === 87 || e.keyCode === 83) {
+  if (
+    e.keyCode === 87 ||
+    e.keyCode === 83 ||
+    e.keyCode === 38 ||
+    e.keyCode === 40
+  ) {
     store.powerDown = false;
+    store.power = 0;
   }
-  if (e.keyCode === 65 || e.keyCode === 68) {
+  if (
+    e.keyCode === 65 ||
+    e.keyCode === 68 ||
+    e.keyCode === 37 ||
+    e.keyCode === 39
+  ) {
     store.steeringDown = false;
+    store.angle = settingsStore.steeringCenter;
   }
 };
 
