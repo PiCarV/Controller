@@ -1,5 +1,6 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 import { readFromPersistentStore } from './PersistentStore';
+
 //define store class which will be used to store data, add extra states here
 class Store {
   //driving data
