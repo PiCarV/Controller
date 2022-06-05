@@ -4,9 +4,9 @@
 name: Node.js CI
 
 on:
-  create:
-    tags:
-      - v*
+  push:
+    branches:
+      - release
 
 jobs:
   build:
