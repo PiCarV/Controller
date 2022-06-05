@@ -1,15 +1,5 @@
 import { action, makeAutoObservable, observable } from 'mobx';
-import persistentStore from './PersistentStore';
-
-type RetrieveSettings = () => Promise<string>;
-
-// @ts-ignore
-const retrieveSettings: RetrieveSettings = async () => {
-  let storedIP = await persistentStore.get('previousIP');
-  // return a string until we have a proper type
-  return storedIP;
-};
-
+import { readFromPersistentStore } from './PersistentStore';
 //define store class which will be used to store data, add extra states here
 class Store {
   //driving data
@@ -24,9 +14,9 @@ class Store {
   pan: number = 90;
   // connection state
   connected = false;
-  ip: string = '192.168.0.10';
+  ip: string = '0.0.0.0';
 
-  //previous id's
+  //previous ip
   previousIP = '';
 
   constructor() {
@@ -35,8 +25,12 @@ class Store {
   }
   //you can add functions to manipulate data here
   fetchSettings() {
-    retrieveSettings().then((ip) => {
-      this.previousIP = ip;
+    console.log('fetching settings');
+    readFromPersistentStore('previousIP').then((value) => {
+      console.log('retrieving previous ip');
+      console.log(value);
+      // @ts-ignore
+      this.previousIP = Number(value);
     });
   }
 }

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
+//import persistentStore from './PersistentStore';
 
 import './App.css';
 
@@ -8,6 +9,10 @@ import './App.css';
 import { Home, Settings } from './Pages';
 
 const App = () => {
+  //useEffect(() => {
+  //  persistentStore.load();
+  //}, []);
+
   return (
     <HashRouter>
       <Routes>

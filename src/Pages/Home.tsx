@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { store } from '../Store';
 import { settingsStore } from '../StoreSettings';
-import { configure, autorun } from 'mobx';
-import io from 'socket.io-client';
+import { configure } from 'mobx';
 import Gamepads from 'gamepads';
 import { MdSettings } from 'react-icons/md';
 import { ConnectionDisplay, VideoStream, Steering, Power } from '../Components';
-
-let socket: any;
-
-const TryConnect = () => {
-  socket = io(`http://${store.ip}:3000`);
-  socket.on('connect', function () {
-    console.log('connected');
-    store.connected = true;
-  });
-  socket.on('disconnect', function () {
-    store.connected = false;
-  });
-};
+import { TryConnect, socket } from '../Backend/Connector';
 
 Gamepads.start();
 // Set's up the gampads event listener
