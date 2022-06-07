@@ -31,7 +31,7 @@ export default {
     // {"match": "routes", "src": ".*", "dest": "/index.html"},
   ],
   packageOptions: {
-    /* ... */
+    external: ['path', 'fs', 'util', 'assert', 'crypto', 'events', 'os'],
   },
   devOptions: {
     // we disable opening in the default browser as we use Tauri to open the app
@@ -39,6 +39,6 @@ export default {
     /* ... */
   },
   buildOptions: {
-    /* ... */
+    baseUrl: './',
   },
 };

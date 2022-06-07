@@ -1,5 +1,8 @@
 import { action, makeAutoObservable, observable } from 'mobx';
-import { readFromPersistentStore } from './PersistentStore';
+import {
+  readFromPersistentStore,
+  writeToPersistentStore,
+} from './PersistentStore';
 
 //define store class which will be used to store data, add extra states here
 class Store {
@@ -22,7 +25,6 @@ class Store {
 
   constructor() {
     makeAutoObservable(this);
-    this.fetchSettings();
   }
   //you can add functions to manipulate data here
   fetchSettings() {
@@ -31,7 +33,7 @@ class Store {
       console.log('retrieving previous ip');
       console.log(value);
       // @ts-ignore
-      this.previousIP = Number(value);
+      this.previousIP = String(value);
     });
   }
 }

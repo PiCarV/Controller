@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
-//import persistentStore from './PersistentStore';
+import {
+  readFromPersistentStore,
+  writeToPersistentStore,
+} from './PersistentStore';
 
 import './App.css';
 
@@ -9,9 +12,8 @@ import './App.css';
 import { Home, Settings } from './Pages';
 
 const App = () => {
-  //useEffect(() => {
-  //  persistentStore.load();
-  //}, []);
+  //writeToPersistentStore('previousIP', '192.168.0.100');
+  //console.log(readFromPersistentStore('previousIP'));
 
   return (
     <HashRouter>

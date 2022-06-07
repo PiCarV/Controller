@@ -41,7 +41,7 @@ const Steering = observer((props: SteeringProps) => {
           store.angle = Number(e.target.value);
           if (store.connected) {
             console.log('emit angle', store.angle);
-            props.socket.emit('steer', store.angle);
+            props.socket.emit('steer', Number(e.target.value));
           }
         }}
       />

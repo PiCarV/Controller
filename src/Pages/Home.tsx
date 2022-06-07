@@ -8,6 +8,10 @@ import Gamepads from 'gamepads';
 import { MdSettings } from 'react-icons/md';
 import { ConnectionDisplay, VideoStream, Steering, Power } from '../Components';
 import { TryConnect, socket } from '../Backend/Connector';
+import {
+  readFromPersistentStore,
+  writeToPersistentStore,
+} from '../PersistentStore';
 
 Gamepads.start();
 // Set's up the gampads event listener
@@ -123,7 +127,15 @@ const Home = observer(() => {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown, false);
     document.addEventListener('keyup', handleKeyUp, false);
-  });
+    writeToPersistentStore('previousIP', '192.168.0.100');
+    readFromPersistentStore('previousIP')
+      .then((ip: any) => {
+        console.log(ip);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     const ElasticControls = setInterval(() => {
