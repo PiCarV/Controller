@@ -1,4 +1,5 @@
 //import Store from 'electron-store';
+// not working yets :(
 
 // function that can be used to write key value pairs to the persistent store
 function writeToPersistentStore(key: string, value: string) {
