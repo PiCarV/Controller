@@ -11,7 +11,8 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-
+    env:
+      EP_DRAFT: false
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -39,3 +40,4 @@ jobs:
           # release the app after building
           release: true
           skip_build: true
+          args: '--publish=always'
