@@ -1,7 +1,8 @@
 {
-  "name": "picar-controller",
-  "version": "0.0.1",
-  "author": "Andre Cox",
+  "author": {
+    "name": "Andre Cox",
+    "email": "andrecox@ubc.ca"
+  },
   "homepage": "https://PiCarV.github.io/Controller",
   "main": "electron/main.ts",
   "scripts": {
