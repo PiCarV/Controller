@@ -3,6 +3,8 @@
     "name": "Andre Cox",
     "email": "andrecox@ubc.ca"
   },
+  "name": "picar-controller",
+  "description": "An application to control a PiCar",
   "homepage": "https://PiCarV.github.io/Controller",
   "main": "electron/main.ts",
   "scripts": {
