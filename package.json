@@ -3,18 +3,20 @@
   "version": "0.0.1",
   "author": "Andre Cox",
   "homepage": "https://PiCarV.github.io/Controller",
+  "main": "electron/main.ts",
   "scripts": {
-    "start": "concurrently --kill-others \"snowpack dev\" \"tauri dev\"",
-    "build": "snowpack build && tauri build",
+    "start": "concurrently --kill-others \"snowpack dev\" \"electron .\"",
+    "build": "snowpack build && electron-builder build --publish never",
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
-    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.4.2",
+    "electron-is": "^3.0.0",
+    "electron-store": "^8.0.1",
     "gamepads": "^1.2.2",
     "gh-pages": "^4.0.0",
     "mobx": "^6.3.13",
@@ -26,6 +28,7 @@
     "react-icons": "^4.3.1",
     "react-router-dom": "^6.2.1",
     "socket.io-client": "^4.4.1",
+    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "universal-cookie": "^4.0.4",
     "validator": "^13.7.0"
   },
@@ -48,6 +51,8 @@
     "@web/test-runner": "^0.13.3",
     "chai": "^4.3.4",
     "concurrently": "^7.2.1",
+    "electron": "^19.0.3",
+    "electron-builder": "^23.0.3",
     "prettier": "^2.2.1",
     "snowpack": "^3.3.7",
     "tailwindcss": "^3.0.19",
@@ -64,5 +69,45 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "build": {
+    "productName": "PiCar Controller",
+    "appId": "com.PiCarController.AndreCox",
+    "files": [
+      "package.json",
+      "build/**/*",
+      "electron/main.ts"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "snap",
+        "AppImage"
+      ],
+      "category": "Development"
+    },
+    "directories": {
+      "output": "dist"
+    }
   }
 }
