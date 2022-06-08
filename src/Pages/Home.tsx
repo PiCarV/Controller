@@ -13,7 +13,10 @@ import {
   writeToPersistentStore,
 } from '../PersistentStore';
 
+console.log(readFromPersistentStore('previousIP'));
+
 Gamepads.start();
+
 // Set's up the gampads event listener
 Gamepads.addEventListener('connect', (e: any) => {
   console.log('Gamepad connected');
@@ -127,14 +130,6 @@ const Home = observer(() => {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown, false);
     document.addEventListener('keyup', handleKeyUp, false);
-    writeToPersistentStore('previousIP', '192.168.0.100');
-    readFromPersistentStore('previousIP')
-      .then((ip: any) => {
-        console.log(ip);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
   }, []);
 
   useEffect(() => {

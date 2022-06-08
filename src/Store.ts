@@ -25,6 +25,7 @@ class Store {
 
   constructor() {
     makeAutoObservable(this);
+    this.fetchSettings();
   }
   //you can add functions to manipulate data here
   fetchSettings() {
