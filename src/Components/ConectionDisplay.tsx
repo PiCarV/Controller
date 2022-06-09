@@ -3,6 +3,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { store } from '../Store';
 import isIP from 'validator/lib/isIP';
+import { Disconnect } from '../Backend/Connector';
 
 type ConnectionProps = {
   className?: string;
@@ -56,8 +57,7 @@ const ConnectionDisplay = observer((props: ConnectionProps) => {
           className="bg-gray-700 rounded-md p-1 border-gray-600 border disabled:hidden mt-1 hover:bg-gray-800 transition-all"
           disabled={!store.connected}
           onClick={() => {
-            store.connected = false;
-            store.ip = '';
+            Disconnect();
           }}
         />
       </form>

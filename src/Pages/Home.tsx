@@ -113,6 +113,7 @@ const handleKeyUp = (e: any) => {
   ) {
     store.powerDown = false;
     store.power = 0;
+    socket.emit('drive', 0);
   }
   if (
     e.keyCode === 65 ||
@@ -122,6 +123,7 @@ const handleKeyUp = (e: any) => {
   ) {
     store.steeringDown = false;
     store.angle = settingsStore.steeringCenter;
+    socket.emit('steer', settingsStore.steeringCenter);
   }
 };
 
@@ -143,7 +145,7 @@ const Home = observer(() => {
             } else if (store.power < 0) {
               store.power++;
             }
-            if (store.connected) {
+            if (store.connected && store.power !== 0) {
               socket.emit('drive', store.power);
             }
           }
@@ -153,13 +155,16 @@ const Home = observer(() => {
             } else if (store.angle < settingsStore.steeringCenter) {
               store.angle++;
             }
-            if (store.connected) {
+            if (
+              store.connected &&
+              store.angle !== settingsStore.steeringCenter
+            ) {
               socket.emit('steer', store.angle);
             }
           }
         }
       }
-    }, 20);
+    }, 80);
   }, []);
 
   // Return the App component.

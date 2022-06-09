@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 import { store } from '../Store';
 import { writeToPersistentStore } from '../PersistentStore';
+import { settingsStore } from '../StoreSettings';
 
 let socket: any;
 
@@ -13,8 +14,17 @@ const TryConnect = () => {
     writeToPersistentStore('previousIP', store.ip);
   });
   socket.on('disconnect', function () {
-    store.connected = false;
+    Disconnect();
   });
 };
 
-export { TryConnect, socket };
+const Disconnect = () => {
+  socket.emit('drive', 0);
+  socket.emit('steer', settingsStore.steeringCenter);
+  store.ip = '';
+  store.connected = false;
+  socket.disconnect();
+  socket = null; // destroy the socket
+};
+
+export { TryConnect, Disconnect, socket };
