@@ -1,4 +1,9 @@
-const { app, BrowserWindow, screen: electronScreen } = require('electron');
+const {
+  app,
+  BrowserWindow,
+  screen: electronScreen,
+  ipcMain,
+} = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
 const Store = require('electron-store');
@@ -12,13 +17,20 @@ const createMainWindow = () => {
     show: false,
     backgroundColor: 'white',
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       allowRunningInsecureContent: true,
+      contextIsolation: false,
+      devTools: isDev,
     },
   });
   const startURL = isDev
     ? 'http://localhost:8080'
     : `file://${path.join(__dirname, '../build/index.html')}`;
+
+  // if we are in production remove the menu bar
+  if (!isDev) {
+    mainWindow.setMenu(null);
+  }
 
   mainWindow.loadURL(startURL);
 

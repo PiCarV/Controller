@@ -13,7 +13,10 @@ import {
   writeToPersistentStore,
 } from '../PersistentStore';
 
+console.log(readFromPersistentStore('previousIP'));
+
 Gamepads.start();
+
 // Set's up the gampads event listener
 Gamepads.addEventListener('connect', (e: any) => {
   console.log('Gamepad connected');
@@ -110,6 +113,7 @@ const handleKeyUp = (e: any) => {
   ) {
     store.powerDown = false;
     store.power = 0;
+    socket.emit('drive', 0);
   }
   if (
     e.keyCode === 65 ||
@@ -119,6 +123,7 @@ const handleKeyUp = (e: any) => {
   ) {
     store.steeringDown = false;
     store.angle = settingsStore.steeringCenter;
+    socket.emit('steer', settingsStore.steeringCenter);
   }
 };
 
@@ -127,14 +132,6 @@ const Home = observer(() => {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown, false);
     document.addEventListener('keyup', handleKeyUp, false);
-    writeToPersistentStore('previousIP', '192.168.0.100');
-    readFromPersistentStore('previousIP')
-      .then((ip: any) => {
-        console.log(ip);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
   }, []);
 
   useEffect(() => {
@@ -148,7 +145,7 @@ const Home = observer(() => {
             } else if (store.power < 0) {
               store.power++;
             }
-            if (store.connected) {
+            if (store.connected && store.power !== 0) {
               socket.emit('drive', store.power);
             }
           }
@@ -158,13 +155,16 @@ const Home = observer(() => {
             } else if (store.angle < settingsStore.steeringCenter) {
               store.angle++;
             }
-            if (store.connected) {
+            if (
+              store.connected &&
+              store.angle !== settingsStore.steeringCenter
+            ) {
               socket.emit('steer', store.angle);
             }
           }
         }
       }
-    }, 20);
+    }, 80);
   }, []);
 
   // Return the App component.

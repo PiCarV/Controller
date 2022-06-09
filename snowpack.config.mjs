@@ -1,3 +1,5 @@
+import builtinModules from 'builtin-modules';
+
 /** @type {import("snowpack").SnowpackUserConfig } */
 export default {
   mount: {
@@ -9,7 +11,7 @@ export default {
     src: { url: '/dist' },
   },
   optimize: {
-    bundle: true,
+    bundle: false,
     minify: true,
     target: 'esnext',
   },
@@ -31,11 +33,15 @@ export default {
     // {"match": "routes", "src": ".*", "dest": "/index.html"},
   ],
   packageOptions: {
-    external: ['path', 'fs', 'util', 'assert', 'crypto', 'events', 'os'],
+    external: [
+      ...builtinModules.filter((external) => external !== 'process'),
+      'electron',
+    ],
   },
   devOptions: {
     // we disable opening in the default browser as we use Tauri to open the app
     open: 'none',
+    port: 8080,
     /* ... */
   },
   buildOptions: {

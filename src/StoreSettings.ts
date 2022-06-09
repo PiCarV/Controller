@@ -1,5 +1,9 @@
-import { action, makeAutoObservable, observable } from 'mobx';
+import { action, makeAutoObservable, observable, autorun } from 'mobx';
 import { instanceOf } from 'prop-types';
+import {
+  readFromPersistentStore,
+  writeToPersistentStore,
+} from './PersistentStore';
 
 //define store class which will be used to store data, add extra states here
 
@@ -11,13 +15,42 @@ class SettingsStore {
   powerLimit: number = 100;
 
   constructor() {
-    this.snapback = 1;
-    this.steeringLimit = 90;
-    this.powerLimit = 100;
-    this.steeringCenter = 90;
     makeAutoObservable(this);
+    this.fetchSettings();
+
+    // monitor changes to the settings and write them to the persistent store when they change
+    autorun(() => {
+      console.log('autorun');
+      writeToPersistentStore('steeringLimit', this.steeringLimit.toString());
+      writeToPersistentStore('steeringCenter', this.steeringCenter.toString());
+      writeToPersistentStore('powerLimit', this.powerLimit.toString());
+    });
   }
   //you can add functions to manipulate data here
+
+  fetchSettings() {
+    readFromPersistentStore('steeringLimit').then((value) => {
+      if (value) {
+        this.steeringLimit = Number(value);
+      } else {
+        this.steeringLimit = 90;
+      }
+    });
+    readFromPersistentStore('steeringCenter').then((value) => {
+      if (value) {
+        this.steeringCenter = Number(value);
+      } else {
+        this.steeringCenter = 90;
+      }
+    });
+    readFromPersistentStore('powerLimit').then((value) => {
+      if (value) {
+        this.powerLimit = Number(value);
+      } else {
+        this.powerLimit = 100;
+      }
+    });
+  }
 }
 
 export const settingsStore = new SettingsStore();
