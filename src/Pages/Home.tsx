@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { store } from '../Store';
+import { Store } from 'react-notifications-component';
 import { settingsStore } from '../StoreSettings';
 import { configure } from 'mobx';
 import Gamepads from 'gamepads';
@@ -34,7 +35,22 @@ Gamepads.start();
 // Set's up the gampads event listener
 Gamepads.addEventListener('connect', (e: any) => {
   store.gamepadConnected = true;
+  console.log(e.gamepad);
   console.log('Gamepad connected');
+  Store.addNotification({
+    title: 'Gamepad connected',
+    message: 'You have connected ' + e.gamepad.gamepad.id,
+    type: 'success',
+    insert: 'top',
+    container: 'top-center',
+    animationIn: ['animate__animated', 'animate__fadeIn'],
+    animationOut: ['animate__animated', 'animate__fadeOut'],
+    dismiss: {
+      duration: 3000,
+      onScreen: true,
+    },
+  });
+
   e.gamepad.addEventListener(
     'joystickmove',
     (e: any) => {
@@ -73,6 +89,19 @@ Gamepads.addEventListener('connect', (e: any) => {
 Gamepads.addEventListener('disconnect', (e: any) => {
   console.log('Gamepad disconnected');
   store.gamepadConnected = false;
+  Store.addNotification({
+    title: 'Gamepad disconnected',
+    message: 'You have disconnected a gamepad',
+    type: 'warning',
+    insert: 'top',
+    container: 'top-center',
+    animationIn: ['animate__animated', 'animate__fadeIn'],
+    animationOut: ['animate__animated', 'animate__fadeOut'],
+    dismiss: {
+      duration: 3000,
+      onScreen: true,
+    },
+  });
 });
 
 // tell mobx not to warn
@@ -192,20 +221,84 @@ const Home = observer(() => {
           <Recorder
             recording={store.recording}
             onClick={() => {
-              store.recording = !store.recording;
               if (store.connected) {
-                ipcRenderer.send('recording', [
-                  store.recording,
-                  settingsStore.dataOutput,
-                  store.ip,
-                ]);
+                if (settingsStore.dataOutput) {
+                  store.recording = !store.recording;
+                  ipcRenderer.send('recording', [
+                    store.recording,
+                    settingsStore.dataOutput,
+                    store.ip,
+                    settingsStore.captureRate,
+                  ]);
+                  if (store.recording) {
+                    Store.addNotification({
+                      title: 'Recording!',
+                      message:
+                        'Recording started, capturing data every ' +
+                        settingsStore.captureRate +
+                        'ms',
+                      type: 'success',
+                      insert: 'top',
+                      container: 'top-center',
+                      animationIn: ['animate__animated', 'animate__fadeIn'],
+                      animationOut: ['animate__animated', 'animate__fadeOut'],
+                      dismiss: {
+                        duration: 3000,
+                        onScreen: true,
+                      },
+                    });
+                  } else {
+                    Store.addNotification({
+                      title: 'Stopped Recording',
+                      message: 'Saved data to ' + settingsStore.dataOutput,
+                      type: 'success',
+                      insert: 'top',
+                      container: 'top-center',
+                      animationIn: ['animate__animated', 'animate__fadeIn'],
+                      animationOut: ['animate__animated', 'animate__fadeOut'],
+                      dismiss: {
+                        duration: 3000,
+                        onScreen: true,
+                      },
+                    });
+                  }
+                } else {
+                  Store.addNotification({
+                    title: 'Warning',
+                    message: 'You need to set a output directory',
+                    type: 'warning',
+                    insert: 'top',
+                    container: 'top-center',
+                    animationIn: ['animate__animated', 'animate__fadeIn'],
+                    animationOut: ['animate__animated', 'animate__fadeOut'],
+                    dismiss: {
+                      duration: 3000,
+                      onScreen: true,
+                    },
+                  });
+                }
               }
               if (!store.connected) {
                 ipcRenderer.send('recording', [
                   false,
                   settingsStore.dataOutput,
                   store.ip,
+                  settingsStore.captureRate,
                 ]);
+                // create a popup to tell the user that they need to connect to the picar to record
+                Store.addNotification({
+                  title: 'Warning',
+                  message: 'You need to connect to a PiCar to record',
+                  type: 'warning',
+                  insert: 'top',
+                  container: 'top-center',
+                  animationIn: ['animate__animated', 'animate__fadeIn'],
+                  animationOut: ['animate__animated', 'animate__fadeOut'],
+                  dismiss: {
+                    duration: 3000,
+                    onScreen: true,
+                  },
+                });
               }
             }}
           />

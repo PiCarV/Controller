@@ -71,6 +71,21 @@ const Settings = observer(() => {
           />
           <label className="ml-2">{settingsStore.powerLimit} %</label>
         </div>
+        <div className="inline-flex transition-all relative items-center border-b border-gray-600 py-2 px-4 w-full text-sm font-medium hover:bg-gray-800">
+          <GiElectric className="mr-2 text-lg" />
+          Capture Rate
+          <input
+            min={200}
+            max={2000}
+            type="range"
+            className="ml-auto"
+            value={settingsStore.captureRate}
+            onChange={(e) => {
+              settingsStore.captureRate = Number(e.target.value);
+            }}
+          />
+          <label className="ml-2">{settingsStore.captureRate} ms</label>
+        </div>
         <div
           className="inline-flex transition-all relative items-center py-2 px-4 w-full text-sm font-medium rounded-b-lg hover:bg-gray-800"
           onClick={() => {
