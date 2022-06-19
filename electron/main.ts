@@ -3,15 +3,23 @@ const {
   BrowserWindow,
   screen: electronScreen,
   ipcMain,
+  electron,
+  dialog,
 } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
 const Store = require('electron-store');
+var request = require('request');
+var MjpegConsumer = require('mjpeg-consumer');
+var FileOnWrite = require('file-on-write');
+var Limiter = require('write-limiter');
 
 Store.initRenderer();
 
+let mainWindow;
+
 const createMainWindow = () => {
-  let mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     show: false,
@@ -54,5 +62,50 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+ipcMain.on('selectDirectory', async function () {
+  console.log('selectDirectory');
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  });
+  mainWindow.webContents.send('selectedDirectory', result.filePaths[0]),
+    console.log(result.filePaths[0]);
+});
+
+let recording = false;
+let req = null;
+
+ipcMain.on('recording', function (e, msg) {
+  recording = msg[0];
+  if (recording) {
+    console.log('recording', msg[0]);
+
+    let writer = new FileOnWrite({
+      path: msg[1],
+      ext: '.jpg',
+    });
+
+    let limiter = new Limiter(600);
+
+    let consumer = new MjpegConsumer();
+
+    req = request
+      .get('http://' + msg[2] + ':8080/?action=stream')
+      .pipe(consumer)
+      .pipe(limiter)
+      .pipe(writer)
+      .on('error', function (err) {
+        console.log('error', err);
+      })
+      .on('close', function () {
+        console.log('closing stream');
+      });
+  } else {
+    console.log('recording', msg[0]);
+    console.log(req);
+    // @ts-ignore
+    req.emit('close');
   }
 });

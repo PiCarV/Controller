@@ -20,8 +20,14 @@ class Store {
   connected = false;
   ip: string = '0.0.0.0';
 
+  //recording
+  recording = false;
+
   //previous ip
   previousIP = '';
+
+  // gamepad connected
+  gamepadConnected = false;
 
   constructor() {
     makeAutoObservable(this);
