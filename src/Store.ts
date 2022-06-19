@@ -1,8 +1,10 @@
-import { action, makeAutoObservable, observable } from 'mobx';
+import { action, makeAutoObservable, observable, autorun } from 'mobx';
 import {
   readFromPersistentStore,
   writeToPersistentStore,
 } from './PersistentStore';
+//@ts-ignore
+const ipcRenderer = require('electron').ipcRenderer;
 
 //define store class which will be used to store data, add extra states here
 class Store {
@@ -20,13 +22,23 @@ class Store {
   connected = false;
   ip: string = '0.0.0.0';
 
+  //recording
+  recording = false;
+
   //previous ip
   previousIP = '';
+
+  // gamepad connected
+  gamepadConnected = false;
 
   constructor() {
     makeAutoObservable(this);
     this.fetchSettings();
+    autorun(() => {
+      ipcRenderer.send('steering', this.angle);
+    });
   }
+
   //you can add functions to manipulate data here
   fetchSettings() {
     console.log('fetching settings');

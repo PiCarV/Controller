@@ -13,6 +13,8 @@ class SettingsStore {
   steeringLimit: number = 90;
   steeringCenter: number = 90;
   powerLimit: number = 100;
+  dataOutput: string = '';
+  captureRate: number = 600;
 
   constructor() {
     makeAutoObservable(this);
@@ -24,6 +26,8 @@ class SettingsStore {
       writeToPersistentStore('steeringLimit', this.steeringLimit.toString());
       writeToPersistentStore('steeringCenter', this.steeringCenter.toString());
       writeToPersistentStore('powerLimit', this.powerLimit.toString());
+      writeToPersistentStore('dataOutput', this.dataOutput);
+      writeToPersistentStore('captureRate', this.captureRate.toString());
     });
   }
   //you can add functions to manipulate data here
@@ -48,6 +52,20 @@ class SettingsStore {
         this.powerLimit = Number(value);
       } else {
         this.powerLimit = 100;
+      }
+    });
+    readFromPersistentStore('dataOutput').then((value) => {
+      if (value) {
+        this.dataOutput = value;
+      } else {
+        this.dataOutput = '';
+      }
+    });
+    readFromPersistentStore('captureRate').then((value) => {
+      if (value) {
+        this.captureRate = Number(value);
+      } else {
+        this.captureRate = 600;
       }
     });
   }

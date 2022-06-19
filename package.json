@@ -22,8 +22,10 @@
     "builtin-modules": "^3.3.0",
     "electron-is": "^3.0.0",
     "electron-store": "^8.0.1",
+    "file-on-write": "^1.1.1",
     "gamepads": "^1.2.2",
     "gh-pages": "^4.0.0",
+    "mjpeg-consumer": "^2.0.0",
     "mobx": "^6.3.13",
     "mobx-react-lite": "^3.2.3",
     "react": "^17.0.2",
@@ -31,11 +33,13 @@
     "react-dom": "^17.0.2",
     "react-gamepads": "^1.0.0",
     "react-icons": "^4.3.1",
+    "react-notifications-component": "^4.0.1",
     "react-router-dom": "^6.2.1",
     "socket.io-client": "^4.4.1",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "universal-cookie": "^4.0.4",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "write-limiter": "^0.1.5"
   },
   "devDependencies": {
     "@snowpack/plugin-dotenv": "^2.1.0",
