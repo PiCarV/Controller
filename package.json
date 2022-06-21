@@ -6,7 +6,7 @@
   "name": "picar-controller",
   "description": "An application to control a PiCar",
   "homepage": "https://PiCarV.github.io/Controller",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "electron/main.ts",
   "scripts": {
     "start": "concurrently --kill-others \"snowpack dev\" \"electron .\"",
