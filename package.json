@@ -6,7 +6,7 @@
   "name": "picar-controller",
   "description": "An application to control a PiCar",
   "homepage": "https://PiCarV.github.io/Controller",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "electron/main.ts",
   "scripts": {
     "start": "concurrently --kill-others \"snowpack dev\" \"electron .\"",
@@ -37,7 +37,6 @@
     "react-router-dom": "^6.2.1",
     "request": "^2.88.2",
     "socket.io-client": "^4.4.1",
-    "universal-cookie": "^4.0.4",
     "validator": "^13.7.0",
     "write-limiter": "^0.1.5"
   },
